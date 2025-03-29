@@ -21,7 +21,7 @@ DockerDB is a command-line utility designed to simplify the setup and management
 To install DockerDB, clone the repository and build the project:
 
 ```bash
-git clone https://github.com/Tygo-lex/dockerDB.git
+git clone https://github.com/Tygo-lex/dockerdb.git
 cd dockerdb
 chmod +x install.sh
 ./install.sh
