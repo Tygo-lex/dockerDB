@@ -18,7 +18,7 @@ if [ ! -f "$BINARY_PATH" ]; then
     
     # Build the binary
     cd "$SCRIPT_DIR"
-    go build -o bin/dockerdb
+    go build -o bin/dockerdb ./cmd/dockerdb
     
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build dockerdb. Please build it manually with 'go build -o bin/dockerdb'${NC}"
