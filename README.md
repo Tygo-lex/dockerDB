@@ -8,22 +8,31 @@ DockerDB is a command-line utility designed to simplify the setup and management
 - **Multiple Database Support**: Supports MySQL, MariaDB, PostgreSQL, MongoDB, and Redis.
 - **Docker API Integration**: Interact with the Docker API to manage containers seamlessly.
 
-## Installation
+## Support
 
+### DockerDB supports:
+- MySQL
+- MariaDB
+- ProgreSQL
+- MongoDB
+- Redis
+
+## Installation
 To install DockerDB, clone the repository and build the project:
 
 ```bash
 git clone <repository-url>
 cd dockerdb
-go build -o dockerdb ./cmd/dockerdb
+chmod +x install.sh
+./install.sh
 ```
-
+Note that you need Go and Docker installed for this to work!
 ## Usage
 
-After building the project, you can use the `dockerdb` command followed by the desired action. Here are some examples:
+After building the project, you can use the `dockerdb` command followed by the desired action. Here is a examples:
 
 ```bash
-dockerdb [Choose between MySQL, MariaDB, PostgreSQL, MongoDB, and Redis]
+dockerdb mysql
 ```
 After running the command, you wil be taken to a quick setup process. After that, a docker container should pop up if you run:
 ```bash
