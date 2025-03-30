@@ -15,6 +15,7 @@ type MySQLConfig struct {
 	User         string
 	Password     string
 	Volume       string
+    Network      string
 }
 
 // SetupMySQLContainer creates and starts a MySQL container
@@ -22,6 +23,9 @@ func SetupMySQLContainer(config MySQLConfig) error {
 	if err := PullImageWithCLI(config.Image); err != nil {
 		return fmt.Errorf("failed to ensure MySQL image: %w", err)
 	}
+	if err := CreateNetworkWithCLI(config.Network); err != nil {
+        return fmt.Errorf("failed to create network: %w", err)
+    }
 	args := []string{
 		"run", "-d",
 		"--name", config.Name,
@@ -35,6 +39,10 @@ func SetupMySQLContainer(config MySQLConfig) error {
 		args = append(args, "-e", "MYSQL_USER="+config.User)
 		args = append(args, "-e", "MYSQL_PASSWORD="+config.Password)
 	}
+
+	if config.Network != "" {
+        args = append(args, "--network", config.Network)
+    }
 
 	args = append(args, config.Image)
 

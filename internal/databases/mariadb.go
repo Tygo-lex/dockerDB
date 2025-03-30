@@ -21,6 +21,7 @@ type MariaDBConfig struct {
 	User         string
 	Password     string
 	Volume       string
+	Network  	 string
 }
 
 // NewMariaDBConfig returns a default MariaDB configuration
@@ -43,6 +44,33 @@ func SetupMariaDBContainer(config MariaDBConfig) error {
 	}
 	if err := PullImageIfNotExists(ctx, cli, config.Image); err != nil {
 		return fmt.Errorf("failed to ensure MariaDB image: %w", err)
+	}
+	    // Create network if specified
+	if config.Network != "" {
+		// Check if network exists
+		networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to list networks: %w", err)
+		}
+
+		networkExists := false
+		for _, network := range networks {
+			if network.Name == config.Network {
+				networkExists = true
+				break
+			}
+		}
+
+		if !networkExists {
+			fmt.Printf("Creating network: %s...\n", config.Network)
+			_, err = cli.NetworkCreate(ctx, config.Network, types.NetworkCreate{})
+			if err != nil {
+				return fmt.Errorf("failed to create network: %w", err)
+			}
+			fmt.Printf("Successfully created network: %s\n", config.Network)
+		} else {
+			fmt.Printf("Network %s already exists\n", config.Network)
+		}
 	}
 
 	// Environment variables for MariaDB
@@ -77,6 +105,17 @@ func SetupMariaDBContainer(config MariaDBConfig) error {
 		},
 		Binds: []string{config.Volume + ":/var/lib/mysql"},
 	}
+
+	    // Network config
+		var networkingConfig *network.NetworkingConfig
+		if config.Network != "" {
+			networkingConfig = &network.NetworkingConfig{
+				EndpointsConfig: map[string]*network.EndpointSettings{
+					config.Network: {},
+				},
+			}
+		}
+	
 
 	// Create container
 	resp, err := cli.ContainerCreate(ctx, containerConfig, hostConfig, nil, nil, config.Name)

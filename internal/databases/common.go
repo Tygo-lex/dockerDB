@@ -54,3 +54,26 @@ func PullImageWithCLI(image string) error {
 	}
 	return nil
 }
+func CreateNetworkWithCLI(name string) error {
+    if name == "" {
+        return nil // No network specified, skip creation
+    }
+    
+    // Check if network exists
+    checkCmd := exec.Command("docker", "network", "inspect", name)
+    if err := checkCmd.Run(); err == nil {
+        // Network exists
+        fmt.Printf("Network %s already exists\n", name)
+        return nil
+    }
+
+    // Network doesn't exist, create it
+    fmt.Printf("Creating network: %s...\n", name)
+    createCmd := exec.Command("docker", "network", "create", name)
+    output, err := createCmd.CombinedOutput()
+    if err != nil {
+        return fmt.Errorf("failed to create network: %v, output: %s", err, output)
+    }
+    fmt.Printf("Successfully created network: %s\n", name)
+    return nil
+}
